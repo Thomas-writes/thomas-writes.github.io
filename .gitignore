@@ -1,0 +1,7 @@
+# ChatGPT: File made by ChatGPT.
+.vercel
+.env*
+node_modules/
+public/
+.agents/
+skills-lock.json

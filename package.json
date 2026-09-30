@@ -1,0 +1,17 @@
+{
+  "name": "terminal-website",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "dev": "node --env-file=.env.local scripts/dev.cjs",
+    "guestbook:setup": "node --env-file=.env.local scripts/guestbook.cjs setup",
+    "guestbook:review": "node --env-file=.env.local scripts/guestbook.cjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.1.0"
+  }
+}

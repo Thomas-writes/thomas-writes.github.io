@@ -6,11 +6,13 @@ const output = document.getElementById('output');
 let maxKeys = []
 let autoCompleteIndex = 0
 let original_input = ""
+// ChatGPT: BEGIN CG-JS-01 added code (after original line 8).
 // ChatGPT: Startup owns the prompt only until the intro finishes or a key skips it.
 let startupRunning = false;
 let startupTimer = null;
-const startupCommands = ['neofetch', 'help'];
+const startupCommands = ['neofetch', 'guestbook'];
 let startupIndex = 0;
+// ChatGPT: END CG-JS-01.
 
 terminal.addEventListener('click', () => {
     input.focus();
@@ -20,18 +22,26 @@ input.addEventListener('focus', () => {
     input.select();
 });
 
+// ChatGPT: BEGIN CG-JS-02 modified code (original lines 18-19).
 // ChatGPT: Keep your directory lists and add a source directory for inspecting this site.
-let mainDirectories = ["professional", "hobbies", "src"]
+let mainDirectories = ["professional", "hobbies", "src", "guestbook"]
 let professionalFiles = ["resume.pdf", "projects.md", "aboutme.txt"];
+// ChatGPT: END CG-JS-02.
 let hobbiesFiles = ["workouts.md"]
-let sourceFiles = ["index.html", "styles.css", "script.js", "aboutme.txt", "resume.pdf", "projects.md", "workouts.md"];
+// ChatGPT: BEGIN CG-JS-03 added code (after original line 20).
+let sourceFiles = ["index.html", "styles.css", "script.js", "favicon.svg", "aboutme.txt", "resume.pdf", "projects.md", "workouts.md"];
 let commandHistory = [];
 let historyIndex = 0;
 let historyDraft = "";
+// ChatGPT: Guestbook notes are database records, exposed as virtual text files.
+let guestbookFiles = [];
+let noteDraft = null;
+// ChatGPT: END CG-JS-03.
 let curDirectory = `/`;
 let span = document.getElementById('mainspan');
 
 input.addEventListener('keydown', (event) => {
+// ChatGPT: BEGIN CG-JS-04 added code (after original line 24).
     if (startupRunning) {
         if (event.ctrlKey || event.metaKey || event.altKey || ['Shift', 'Control', 'Alt', 'Meta', 'Tab'].includes(event.key)) return;
         event.preventDefault();
@@ -39,34 +49,63 @@ input.addEventListener('keydown', (event) => {
         return;
     }
     if (input.readOnly) return;
+    if (noteDraft) {
+        if (event.key === 'Escape' || (event.ctrlKey && event.key.toLowerCase() === 'c')) {
+            event.preventDefault();
+            closeNoteDraft('Note cancelled.');
+        }else if (event.key === 'Enter') {
+            event.preventDefault();
+            acceptNoteInput(input.value);
+        }else if (event.key === 'Tab') event.preventDefault();
+        return;
+    }
     if (event.key !== 'Tab') resetCompletion();
+// ChatGPT: END CG-JS-04.
     if (event.key === 'Enter') {
         event.preventDefault();
     
         let userInput = input.value.trim();
+// ChatGPT: BEGIN CG-JS-05 added code (after original line 28).
         if (!userInput) return;
         commandHistory.push(userInput);
         historyIndex = commandHistory.length;
         historyDraft = "";
+// ChatGPT: END CG-JS-05.
         let newLine = document.createElement('div');
+// ChatGPT: BEGIN CG-JS-06 modified code (original lines 30-30).
         newLine.className = 'command-line';
         newLine.textContent = `$ ${curDirectory} ${userInput}`;
+// ChatGPT: END CG-JS-06.
         output.appendChild(newLine);
 
         input.value = '';
+// ChatGPT: BEGIN CG-JS-07 added code (after original line 33).
         // ChatGPT: Reading files requires cat; bare filenames and portfolio labels are not commands.
         const command = userInput.split(/\s+/)[0];
         const argument = userInput.slice(command.length).trim();
+        // ChatGPT: The guide is separate from help, and writing a note is an interactive command.
+        if (userInput === 'guestbook') {
+            guestbookGuide();
+        }else if (command === 'leave-note') {
+            startNoteDraft(argument);
+        }
+// ChatGPT: END CG-JS-07.
         //clear function
-        if (userInput.trim() === 'clear') {
+// ChatGPT: BEGIN CG-JS-08 modified code (original lines 35-35).
+        else if (userInput.trim() === 'clear') {
+// ChatGPT: END CG-JS-08.
             output.innerHTML = '';
         }
         //ls function
+// ChatGPT: BEGIN CG-JS-09 modified code (original lines 39-39).
         else if (command === 'ls'){
+            if (resolvePath(argument || curDirectory) === '/guestbook') { listGuestbook(); return; }
+// ChatGPT: END CG-JS-09.
             output.appendChild(document.createElement('br'));
             let lsLine = document.createElement('div');
             lsLine.textContent = ` `
             
+// ChatGPT: BEGIN CG-JS-10 modified code (original lines 44-55).
             // ChatGPT: The same lists now support ls with an absolute or relative path.
             let files = directoryFiles(resolvePath(argument || curDirectory));
             if (!files) {
@@ -75,11 +114,13 @@ input.addEventListener('keydown', (event) => {
             }
             for (let i = 0; i < files.length; i++){
                 lsLine.textContent += `${files[i]} `;
+// ChatGPT: END CG-JS-10.
             }
             output.appendChild(lsLine)
             output.appendChild(document.createElement('br'));
         }
         //cd function
+// ChatGPT: BEGIN CG-JS-11 modified code (original lines 61-74).
         else if (command === 'cd') {
             // ChatGPT: Resolve paths before updating your existing directory and prompt variables.
             let dirName = resolvePath(argument || '/');
@@ -89,9 +130,12 @@ input.addEventListener('keydown', (event) => {
                 changeDirOutput.textContent = `Changed directory to ${curDirectory}`;
                 itemWithBr(changeDirOutput);
                 span.textContent = `$ ${curDirectory}`;
+                if (dirName === '/guestbook') listGuestbook();
             }else{
                 errorOutput("Directory not found. Type 'ls' for directories.");
+// ChatGPT: END CG-JS-11.
             }
+// ChatGPT: BEGIN CG-JS-12 modified code (original lines 76-92).
         }
         else if (userInput === 'pwd') {
             let pathOutput = document.createElement('div');
@@ -101,6 +145,7 @@ input.addEventListener('keydown', (event) => {
         // ChatGPT: A site profile inspired by neofetch, without claiming to read the visitor's system.
         else if (userInput === 'neofetch') {
             neofetch();
+// ChatGPT: END CG-JS-12.
         }
         //help function
         else if (userInput === "help") {
@@ -110,16 +155,22 @@ input.addEventListener('keydown', (event) => {
             output.appendChild(helpOutput);
             
             const commands = [
+// ChatGPT: BEGIN CG-JS-13 modified code (original lines 102-103).
                 "- ls [path]: List directories and files",
                 "- cd [directory]: Change directory; supports /, ~, . and ..",
                 "- pwd: Show the current directory",
+                "- guestbook: Show how to leave and read notes",
+                "- leave-note [filename]: Write a named guestbook note",
                 "- neofetch: Show ASCII artwork and the site profile",
                 "- open /professional/resume.pdf: View my resume",
                 "- cd /src: Browse this website source",
+// ChatGPT: END CG-JS-13.
                 "- clear: Clear the terminal screen",
                 "- open [file]: open this file in a new tab",
                 "- help: Show this help message",
+// ChatGPT: BEGIN CG-JS-14 modified code (original lines 107-107).
                 "- cat [file]: Open the file in terminal"
+// ChatGPT: END CG-JS-14.
             ];
             
             commands.forEach(command => {
@@ -131,6 +182,7 @@ input.addEventListener('keydown', (event) => {
             output.appendChild(document.createElement('br'));
         }
         //open function
+// ChatGPT: BEGIN CG-JS-15 modified code (original lines 119-125).
         else if (command === 'open'){
             // ChatGPT: Split a resolved path so your existing per-directory handlers still work.
             let filePath = resolvePath(argument);
@@ -141,85 +193,120 @@ input.addEventListener('keydown', (event) => {
                 if (fileName === "resume.pdf"){
                     // ChatGPT: Let the browser's PDF viewer display the original resume.
                     window.open('resume.pdf', '_blank', 'noopener');
+// ChatGPT: END CG-JS-15.
                     output.appendChild(document.createElement('br'));
                 }
                 else if (fileName === "aboutme.txt"){
+// ChatGPT: BEGIN CG-JS-16 modified code (original lines 129-129).
                     window.open('aboutme.txt', '_blank', 'noopener');
+// ChatGPT: END CG-JS-16.
                     output.appendChild(document.createElement('br'));
                 }
                 else if (fileName === "projects.md"){
+// ChatGPT: BEGIN CG-JS-17 modified code (original lines 133-135).
                     openMarkdownFile('./projects.md');
+// ChatGPT: END CG-JS-17.
                     output.appendChild(document.createElement('br'));
                 }
                 else{
                     errorOutput();
                 }
             }
+// ChatGPT: BEGIN CG-JS-18 modified code (original lines 142-142).
             else if (fileDirectory == `/hobbies/`){
+// ChatGPT: END CG-JS-18.
                 if (fileName === "workouts.md"){
+// ChatGPT: BEGIN CG-JS-19 modified code (original lines 144-146).
                     openMarkdownFile('./workouts.md');
+// ChatGPT: END CG-JS-19.
                     output.appendChild(document.createElement('br'));
                 }
                 else{
                     errorOutput();
                 }
             }
+// ChatGPT: BEGIN CG-JS-20 added code (after original line 152).
             else if (fileDirectory === '/src/' && sourceFiles.includes(fileName)) {
                 if (fileName === 'resume.pdf') window.open('resume.pdf', '_blank', 'noopener');
                 else openSourceFile(fileName);
             }
+// ChatGPT: END CG-JS-20.
             else{
                 errorOutput();
             }
         }
         //cat function
+// ChatGPT: BEGIN CG-JS-21 modified code (original lines 158-160).
         else if (command === 'cat'){
             // ChatGPT: Split a resolved path so your existing per-directory handlers still work.
             let filePath = resolvePath(argument);
             let fileName = filePath.slice(filePath.lastIndexOf('/') + 1);
             let fileDirectory = filePath.slice(0, filePath.lastIndexOf('/') + 1);
             if (!argument) { errorOutput('Usage: cat <file>'); return; }
+            if (fileDirectory === '/guestbook/') { readGuestbookNote(fileName); return; }
             if (fileDirectory == `/professional/`){
+// ChatGPT: END CG-JS-21.
                 if (fileName === "aboutme.txt"){
+// ChatGPT: BEGIN CG-JS-22 modified code (original lines 162-163).
                     readLocalFile('./aboutme.txt')
+// ChatGPT: END CG-JS-22.
                     //response.text() gets passed as out short for output - same for all cat calls
                     //response.text() has the text of the file
                     .then(out => {catFunc(out, fileName);
+// ChatGPT: BEGIN CG-JS-23 modified code (original lines 167-167).
                     }).catch(error => errorOutput(error.message));
+// ChatGPT: END CG-JS-23.
                 }
+// ChatGPT: BEGIN CG-JS-24 modified code (original lines 169-173).
                 else if (fileName === "resume.pdf"){
                     errorOutput('Try open resume.pdf instead.');
+// ChatGPT: END CG-JS-24.
                 }
                 else if (fileName === "projects.md"){
+// ChatGPT: BEGIN CG-JS-25 modified code (original lines 176-177).
                     readLocalFile('./projects.md')
+// ChatGPT: END CG-JS-25.
                     .then(out => {catFunc(out, fileName);
+// ChatGPT: BEGIN CG-JS-26 modified code (original lines 179-179).
                     }).catch(error => errorOutput(error.message));
+// ChatGPT: END CG-JS-26.
                 }
                 else{
                     errorOutput();
                 }
+// ChatGPT: BEGIN CG-JS-27 modified code (original lines 184-184).
             }else if (fileDirectory == `/hobbies/`){
+// ChatGPT: END CG-JS-27.
                 if (fileName === "workouts.md"){
+// ChatGPT: BEGIN CG-JS-28 modified code (original lines 186-187).
                     readLocalFile('./workouts.md')
+// ChatGPT: END CG-JS-28.
                     .then(out => {catFunc(out, fileName);
+// ChatGPT: BEGIN CG-JS-29 modified code (original lines 189-189).
                     }).catch(error => errorOutput(error.message));
+// ChatGPT: END CG-JS-29.
                 }
                 else{
                     errorOutput();
                 }
+// ChatGPT: BEGIN CG-JS-30 added code (after original line 193).
             }else if (fileDirectory === '/src/' && sourceFiles.includes(fileName)) {
                 if (fileName === 'resume.pdf') errorOutput('Try open resume.pdf instead.');
                 else readLocalFile(fileName).then(out => catFunc(out, fileName)).catch(error => errorOutput(error.message));
+// ChatGPT: END CG-JS-30.
             }else{
                 errorOutput();
             }
         }
         else {
             let unknownCommand = document.createElement('div');
+// ChatGPT: BEGIN CG-JS-31 modified code (original lines 200-200).
             unknownCommand.className = 'terminal-error';
             unknownCommand.textContent = `${userInput}: command not found. Use cat <file> to read a file, or help for commands.`;
+// ChatGPT: END CG-JS-31.
             itemWithBr(unknownCommand);
         }    
+// ChatGPT: BEGIN CG-JS-32 added code (after original line 202).
     }else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         // ChatGPT: Save the unfinished input so Down can restore it after browsing history.
         event.preventDefault();
@@ -228,14 +315,16 @@ input.addEventListener('keydown', (event) => {
         historyIndex = Math.max(0, Math.min(commandHistory.length, historyIndex));
         input.value = historyIndex === commandHistory.length ? historyDraft : commandHistory[historyIndex];
         input.setSelectionRange(input.value.length, input.value.length);
+// ChatGPT: END CG-JS-32.
     }else if (event.key == "Tab"){
+// ChatGPT: BEGIN CG-JS-33 modified code (original lines 204-210).
         event.preventDefault();
         // ChatGPT: Empty input stays empty; only complete a typed prefix at the end of the input.
         if (!input.value.trim()) { resetCompletion(); return; }
         if (input.selectionStart !== input.value.length || input.selectionEnd !== input.value.length) return;
         if (maxKeys.length === 0) {
             original_input = input.value;
-            let listOfCommands = ["ls", "cd", "cat", "help", "open", "clear", "pwd", "neofetch"];
+            let listOfCommands = ["ls", "cd", "cat", "help", "open", "clear", "pwd", "neofetch", "guestbook", "leave-note"];
             let match = original_input.match(/^(.*\s)?([^\s]*)$/);
             let prefix = match[1] || '';
             let fragment = match[2];
@@ -252,11 +341,15 @@ input.addEventListener('keydown', (event) => {
                     .map(name => prefix + parent + name);
             }
         }
+// ChatGPT: END CG-JS-33.
         if (maxKeys.length > 0){
             input.value = maxKeys[autoCompleteIndex];
+// ChatGPT: BEGIN CG-JS-34 added code (after original line 212).
             input.setSelectionRange(input.value.length, input.value.length);
+// ChatGPT: END CG-JS-34.
             //mod sends it back to 0
             autoCompleteIndex = (autoCompleteIndex + 1) % maxKeys.length;
+// ChatGPT: CG-JS-35 removed original lines 215-244; see CHATGPT-CHANGES.md.
         }
     }
 });
@@ -274,6 +367,7 @@ function catFunc(out, fileName) {
     output.appendChild(document.createElement('br'));
 };
 
+// ChatGPT: BEGIN CG-JS-36 modified code (original lines 262-262).
 function openMarkdownInNewTab(markdownText, newTab) {
     // ChatGPT: Fall back to plain text if the external Markdown library is unavailable.
     if (typeof marked === 'undefined') {
@@ -282,7 +376,9 @@ function openMarkdownInNewTab(markdownText, newTab) {
         newTab.document.body.replaceChildren(pre);
         return;
     }
+// ChatGPT: END CG-JS-36.
     let text = marked.parse(markdownText);
+// ChatGPT: CG-JS-37 removed original lines 264-264; see CHATGPT-CHANGES.md.
     
     if (newTab) {
         newTab.document.write(`
@@ -316,13 +412,18 @@ function itemWithBr(element){
     output.appendChild(document.createElement('br'));
 };
 
+// ChatGPT: BEGIN CG-JS-38 modified code (original lines 298-298).
 function errorOutput(message){
+// ChatGPT: END CG-JS-38.
     let errorText = document.createElement('div');
+// ChatGPT: BEGIN CG-JS-39 modified code (original lines 300-300).
     errorText.className = 'terminal-error';
     errorText.textContent = message || `File not found. Type 'help' for a list of commands and 'ls' for files and directories`;
+// ChatGPT: END CG-JS-39.
     output.appendChild(document.createElement('br'));
     output.appendChild(errorText);
     output.appendChild(document.createElement('br'));
+// ChatGPT: BEGIN CG-JS-40 modified code (original lines 304-304).
 }
 
 // ChatGPT: These helpers extend your handlers without changing the on-disk file layout.
@@ -349,6 +450,7 @@ function directoryFiles(path) {
     if (path === '/professional') return professionalFiles;
     if (path === '/hobbies') return hobbiesFiles;
     if (path === '/src') return sourceFiles;
+    if (path === '/guestbook') return guestbookFiles;
     return null;
 }
 
@@ -402,30 +504,33 @@ function neofetch() {
     fetchOutput.className = 'neofetch';
     let art = document.createElement('pre');
     art.className = 'neofetch-art';
+    // ChatGPT: Preserve the user-provided Unicode dragon and its Braille spacing.
     art.textContent = [
-        '        .--------------------.',
-        '       / .----------------. /|',
-        '      / /                 / /|',
-        '     / /   >_ THOMAS     / / |',
-        '    / /                 / /  |',
-        '   / /   [ systems ]   / /   |',
-        '  / /_________________/ /    |',
-        ' /_____________________/     |',
-        ' |  . . .              |    /',
-        ' |_____________________|   /',
-        '       /________/      |  /',
-        '      /________/       | /',
-        '     /________/        |/',
-        '    /_________________/'
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣤⣤⡼⠀⢀⡀⣀⢱⡄⡀⠀⠀⠀⢲⣤⣤⣤⣤⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣾⣿⣿⣿⣿⣿⡿⠛⠋⠁⣤⣿⣿⣿⣧⣷⠀⠀⠘⠉⠛⢻⣷⣿⣽⣿⣿⣷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀",
+        "⠀⠀⠀⠀⠀⠀⢀⣴⣞⣽⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠠⣿⣿⡟⢻⣿⣿⣇⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣟⢦⡀⠀⠀⠀⠀⠀⠀",
+        "⠀⠀⠀⠀⠀⣠⣿⡾⣿⣿⣿⣿⣿⠿⣻⣿⣿⡀⠀⠀⠀⢻⣿⣷⡀⠻⣧⣿⠆⠀⠀⠀⠀⣿⣿⣿⡻⣿⣿⣿⣿⣿⠿⣽⣦⡀⠀⠀⠀⠀",
+        "⠀⠀⠀⠀⣼⠟⣩⣾⣿⣿⣿⢟⣵⣾⣿⣿⣿⣧⠀⠀⠀⠈⠿⣿⣿⣷⣈⠁⠀⠀⠀⠀⣰⣿⣿⣿⣿⣮⣟⢯⣿⣿⣷⣬⡻⣷⡄⠀⠀⠀",
+        "⠀⠀⢀⡜⣡⣾⣿⢿⣿⣿⣿⣿⣿⢟⣵⣿⣿⣿⣷⣄⠀⣰⣿⣿⣿⣿⣿⣷⣄⠀⢀⣼⣿⣿⣿⣷⡹⣿⣿⣿⣿⣿⣿⢿⣿⣮⡳⡄⠀⠀",
+        "⠀⢠⢟⣿⡿⠋⣠⣾⢿⣿⣿⠟⢃⣾⢟⣿⢿⣿⣿⣿⣾⡿⠟⠻⣿⣻⣿⣏⠻⣿⣾⣿⣿⣿⣿⡛⣿⡌⠻⣿⣿⡿⣿⣦⡙⢿⣿⡝⣆⠀",
+        "⠀⢯⣿⠏⣠⠞⠋⠀⣠⡿⠋⢀⣿⠁⢸⡏⣿⠿⣿⣿⠃⢠⣴⣾⣿⣿⣿⡟⠀⠘⢹⣿⠟⣿⣾⣷⠈⣿⡄⠘⢿⣦⠀⠈⠻⣆⠙⣿⣜⠆",
+        "⢀⣿⠃⡴⠃⢀⡠⠞⠋⠀⠀⠼⠋⠀⠸⡇⠻⠀⠈⠃⠀⣧⢋⣼⣿⣿⣿⣷⣆⠀⠈⠁⠀⠟⠁⡟⠀⠈⠻⠀⠀⠉⠳⢦⡀⠈⢣⠈⢿⡄",
+        "⣸⠇⢠⣷⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⠿⠿⠋⠀⢻⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢾⣆⠈⣷",
+        "⡟⠀⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣶⣤⡀⢸⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡄⢹",
+        "⡇⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⠈⣿⣼⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠃⢸",
+        "⢡⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⠶⣶⡟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼",
+        "⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡾⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁",
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡁⢠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣼⣀⣠⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
     ].join('\n');
     let info = document.createElement('div');
     info.className = 'neofetch-info';
     let title = document.createElement('strong');
-    title.textContent = 'thomas@savasten.com';
+    title.textContent = 'thomas@vercel';
     info.appendChild(title);
     const details = [
         ['Site', 'thomas.savasten.com'],
-        ['Studies', 'Computer Science + Mathematics'],
+        ['Major', 'Computer Science + Mathematics'],
         ['University', 'University of Kansas'],
         ['Shell', 'JavaScript / virtual filesystem'],
         ['Theme', 'Catppuccin Mocha'],
@@ -457,6 +562,156 @@ function neofetch() {
     itemWithBr(fetchOutput);
 }
 
+
+// ChatGPT: Explain the guestbook at startup while keeping help available as a command.
+function guestbookGuide() {
+    let guide = document.createElement('div');
+    guide.className = 'guestbook-guide';
+    guide.textContent = `Leave something behind.
+
+  leave-note hello-thomas.txt
+
+Choose a filename, add your name (or stay anonymous), and write a message.
+You can also type leave-note to be guided through every step.
+Review your note, then type y to submit it for Thomas to approve.
+Approved notes are public. Escape or Ctrl+C cancels a draft.
+
+Read the guestbook:  ls /guestbook
+Read one note:      cat /guestbook/hello-thomas.txt
+Explore the site:   help`;
+    itemWithBr(guide);
+}
+
+function noteMessage(text) {
+    let line = document.createElement('div');
+    line.className = 'guestbook-message';
+    line.textContent = text;
+    itemWithBr(line);
+}
+
+function noteFilename(value) {
+    let name = value.trim().toLowerCase().replace(/\s+/g, '-');
+    if (!name.endsWith('.txt')) name += '.txt';
+    return /^[a-z0-9][a-z0-9_-]{0,47}\.txt$/.test(name) ? name : null;
+}
+
+function setNoteStep(step, label) {
+    noteDraft.step = step;
+    input.value = '';
+    span.textContent = label;
+    input.setAttribute('aria-label', label);
+    resetCompletion();
+}
+
+function startNoteDraft(filename) {
+    let name = filename ? noteFilename(filename) : '';
+    if (filename && !name) {
+        errorOutput('Use a filename with 1–48 letters, numbers, hyphens, or underscores, plus .txt.');
+        return;
+    }
+    noteDraft = { filename: name, author: '', message: '', step: 'filename', requestId: crypto.randomUUID() };
+    noteMessage('Write a guestbook note. Approved notes will be public. Escape or Ctrl+C cancels.');
+    if (name) {
+        noteMessage('Filename: ' + name);
+        setNoteStep('author', 'Your name (optional):');
+    }else{
+        setNoteStep('filename', 'Note filename:');
+    }
+}
+
+function closeNoteDraft(message) {
+    noteDraft = null;
+    input.value = '';
+    span.textContent = `$ ${curDirectory}`;
+    input.setAttribute('aria-label', 'Terminal command');
+    resetCompletion();
+    if (message) noteMessage(message);
+}
+
+function reviewNoteDraft() {
+    noteMessage(`${noteDraft.filename}\nBy ${noteDraft.author}\n\n${noteDraft.message}\n\nThis note will be public after approval.`);
+    setNoteStep('confirm', 'Submit? [y/n]:');
+}
+
+function acceptNoteInput(value) {
+    const text = value.trim();
+    if (noteDraft.step === 'filename') {
+        const name = noteFilename(text);
+        if (!name) { errorOutput('Use 1–48 letters, numbers, hyphens, or underscores for the filename.'); return; }
+        noteDraft.filename = name;
+        noteMessage('Filename: ' + name);
+        if (noteDraft.message) reviewNoteDraft();
+        else setNoteStep('author', 'Your name (optional):');
+    }else if (noteDraft.step === 'author') {
+        if (text.length > 60) { errorOutput('Keep your name under 61 characters.'); return; }
+        noteDraft.author = text || 'Anonymous';
+        setNoteStep('message', 'Message:');
+        noteMessage('Write up to 1,000 characters, then press Enter to review.');
+    }else if (noteDraft.step === 'message') {
+        if (!text || text.length > 1000) { errorOutput('Write a message between 1 and 1,000 characters.'); return; }
+        noteDraft.message = text;
+        reviewNoteDraft();
+    }else if (noteDraft.step === 'confirm') {
+        if (text.toLowerCase() === 'n') { closeNoteDraft('Note cancelled.'); return; }
+        if (text.toLowerCase() !== 'y') { errorOutput('Type y to submit or n to cancel.'); return; }
+        submitNoteDraft();
+    }
+}
+
+async function guestbookRequest(path, options = {}) {
+    const response = await fetch('/api/notes' + path, { ...options, signal: AbortSignal.timeout(15000) });
+    let data;
+    try { data = await response.json(); }
+    catch { throw new Error('The guestbook is not connected yet. Your note has not been saved.'); }
+    if (!response.ok) {
+        const error = new Error(data.error || 'The guestbook is unavailable. Please try again later.');
+        error.status = response.status;
+        throw error;
+    }
+    return data;
+}
+
+async function submitNoteDraft() {
+    input.readOnly = true;
+    try {
+        await guestbookRequest('', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: noteDraft.filename, author: noteDraft.author, message: noteDraft.message, requestId: noteDraft.requestId })
+        });
+        closeNoteDraft('Note submitted for review. It will appear in /guestbook after approval.');
+    }catch (error) {
+        errorOutput(error.message);
+        if (error.status === 409) {
+            noteMessage('Choose another filename. Your message is still here.');
+            setNoteStep('filename', 'Note filename:');
+        }else{
+            noteMessage('Your draft is still here. Type y to retry, or n to cancel.');
+            setNoteStep('confirm', 'Retry? [y/n]:');
+        }
+    }finally{
+        input.readOnly = false;
+    }
+}
+
+async function listGuestbook() {
+    input.readOnly = true;
+    try {
+        const data = await guestbookRequest('');
+        guestbookFiles = data.notes.map(note => note.filename);
+        noteMessage(guestbookFiles.length ? guestbookFiles.join('  ') : 'No approved notes yet. Be the first: leave-note');
+    }catch (error) { errorOutput(error.message); }
+    finally { input.readOnly = false; }
+}
+
+async function readGuestbookNote(filename) {
+    input.readOnly = true;
+    try {
+        const data = await guestbookRequest('?filename=' + encodeURIComponent(filename));
+        catFunc(`${data.note.author} · ${new Date(data.note.createdAt).toLocaleDateString()}\n\n${data.note.message}`, data.note.filename);
+    }catch (error) { errorOutput(error.message); }
+    finally { input.readOnly = false; }
+}
 
 // ChatGPT: Run both intro commands through your existing Enter handler in order.
 function runStartupCommand() {
@@ -534,3 +789,4 @@ new MutationObserver(keepPromptVisible).observe(output, { childList: true, subtr
 new ResizeObserver(keepPromptVisible).observe(terminal);
 
 startStartup();
+// ChatGPT: END CG-JS-40.

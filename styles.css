@@ -1,3 +1,4 @@
+/* // ChatGPT: BEGIN CG-CSS-01 added code (after original line 0). */
 /* // ChatGPT: Keep your Ghostty font and Mocha palette with a solid page background. */
 :root {
     color-scheme: dark;
@@ -15,8 +16,10 @@ html {
     min-height: 100%;
     background-color: var(--background);
 }
+/* // ChatGPT: END CG-CSS-01. */
 
 body {
+/* // ChatGPT: BEGIN CG-CSS-02 modified code (original lines 3-6). */
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--terminal-font);
@@ -27,19 +30,25 @@ body {
     max-width: 1180px;
     min-height: 100vh;
     box-sizing: border-box;
+/* // ChatGPT: END CG-CSS-02. */
 }
 #name {
+/* // ChatGPT: BEGIN CG-CSS-03 modified code (original lines 9-12). */
     text-align: left;
     margin-top: 0;
     font-family: inherit;
     font-size: 28px;
     line-height: 1.3;
     letter-spacing: -0.04em;
+/* // ChatGPT: END CG-CSS-03. */
     font-weight: bold;
+/* // ChatGPT: BEGIN CG-CSS-04 modified code (original lines 14-15). */
     color: var(--foreground);
     margin-bottom: 12px;
+/* // ChatGPT: END CG-CSS-04. */
 }
 .website-text{
+/* // ChatGPT: BEGIN CG-CSS-05 modified code (original lines 18-22). */
     text-align: left;
     margin-top: 0;
     margin-bottom: 0;
@@ -47,13 +56,17 @@ body {
     font-size: 1em;
     font-weight: normal;
     color: var(--muted);
+/* // ChatGPT: END CG-CSS-05. */
 }
 #helper-text{
+/* // ChatGPT: BEGIN CG-CSS-06 modified code (original lines 25-25). */
     font-size: 14px;
     margin-top: 8px;
     color: #9399b2;
+/* // ChatGPT: END CG-CSS-06. */
 }
 #terminal {
+/* // ChatGPT: BEGIN CG-CSS-07 modified code (original lines 28-34). */
     width: 100%;
     margin: 32px 0 0;
     background-color: var(--background);
@@ -62,31 +75,45 @@ body {
     border-radius: 0;
     box-shadow: none;
     min-height: 60vh;
+/* // ChatGPT: END CG-CSS-07. */
 }
 #output {
+/* // ChatGPT: BEGIN CG-CSS-08 modified code (original lines 37-37). */
     font-size: inherit;
+/* // ChatGPT: END CG-CSS-08. */
     overflow-y: auto;
+/* // ChatGPT: BEGIN CG-CSS-09 added code (after original line 38). */
     overflow-wrap: anywhere;
+/* // ChatGPT: END CG-CSS-09. */
 }
 #input-line {
+/* // ChatGPT: BEGIN CG-CSS-10 modified code (original lines 41-41). */
     font-size: inherit;
+/* // ChatGPT: END CG-CSS-10. */
     display: flex;
+/* // ChatGPT: BEGIN CG-CSS-11 added code (after original line 42). */
     align-items: baseline;
+/* // ChatGPT: END CG-CSS-11. */
     overflow-x: hidden;
 }
 #mainspan {
+/* // ChatGPT: BEGIN CG-CSS-12 added code (after original line 45). */
     color: #b4befe;
+/* // ChatGPT: END CG-CSS-12. */
     white-space: nowrap;
 }
 #input {
     background: none;
     border: none;
+/* // ChatGPT: BEGIN CG-CSS-13 modified code (original lines 51-53). */
     color: var(--foreground);
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+/* // ChatGPT: END CG-CSS-13. */
     outline: none;
     flex-grow: 1;
+/* // ChatGPT: BEGIN CG-CSS-14 modified code (original lines 56-57). */
     margin-left: 1ch;
     min-width: 0;
     padding: 0;
@@ -167,7 +194,10 @@ body > br {
 .neofetch-art {
     color: #cba6f7;
     font: inherit;
-    line-height: 1.25;
+    /* // ChatGPT: Render the Unicode art at the same text size as the terminal. */
+    font-size: 1em;
+    line-height: 1;
+    letter-spacing: 0;
     white-space: pre;
     margin: 0;
     flex-shrink: 0;
@@ -193,3 +223,13 @@ body > br {
     width: 26px;
     height: 18px;
 }
+
+/* // ChatGPT: Preserve line breaks in the guestbook guide and plain-text note previews. */
+.guestbook-guide, .guestbook-message {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.guestbook-guide {
+    color: var(--muted);
+}
+/* // ChatGPT: END CG-CSS-14. */
