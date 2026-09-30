@@ -1,57 +1,193 @@
+/* // ChatGPT: Keep your Ghostty font and Mocha palette with a solid page background. */
+:root {
+    color-scheme: dark;
+    --background: #1e1e2e;
+    --foreground: #cdd6f4;
+    --muted: #a6adc8;
+    --cursor: #f5e0dc;
+    --selection: #585b70;
+    --terminal-font: 'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrains Mono', monospace;
+}
+
+html {
+    min-height: 100%;
+    background-color: var(--background);
+}
 
 body {
-    background-color: black;
-    color: lime;
-    font-family: monospace;
-    padding: 20px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--terminal-font);
+    font-size: 16px;
+    line-height: 1.65;
+    padding: 56px 48px;
+    margin: 0 auto;
+    max-width: 1180px;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 #name {
-    text-align: center;
-    margin-top: 50px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 3rem; 
+    text-align: left;
+    margin-top: 0;
+    font-family: inherit;
+    font-size: 28px;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
     font-weight: bold;
-    color: #00FF00; 
-    margin-bottom: 10px;
+    color: var(--foreground);
+    margin-bottom: 12px;
 }
 .website-text{
-    text-align: center;
-    margin-top: 50px;
-    font-family: 'Courier New', Courier, monospace; 
-    font-size: 1.5rem; 
-    color: #00FF00; 
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: normal;
+    color: var(--muted);
 }
 #helper-text{
-    font-size: 1.2rem;
+    font-size: 14px;
+    margin-top: 8px;
+    color: #9399b2;
 }
 #terminal {
-    width: 80%;
-    margin: auto;
-    background-color: black;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px lime;
-    height: 80%;
+    width: 100%;
+    margin: 32px 0 0;
+    background-color: var(--background);
+    border-top: 1px solid #313244;
+    padding: 24px 0 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 60vh;
 }
 #output {
-    font-size: 16px;
+    font-size: inherit;
     overflow-y: auto;
+    overflow-wrap: anywhere;
 }
 #input-line {
-    font-size: 16px;
+    font-size: inherit;
     display: flex;
+    align-items: baseline;
     overflow-x: hidden;
 }
 #mainspan {
+    color: #b4befe;
     white-space: nowrap;
 }
 #input {
     background: none;
     border: none;
-    color: lime;
-    font-family: monospace;
-    font-size: 16px;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
     outline: none;
     flex-grow: 1;
-    margin-left: 0%;
+    margin-left: 1ch;
+    min-width: 0;
+    padding: 0;
+    caret-color: var(--cursor);
+}
+
+/* // ChatGPT: Use Ghostty's selection colors while preserving the browser's native text input. */
+::selection {
+    background: var(--selection);
+    color: var(--foreground);
+}
+a {
+    color: #89b4fa;
+}
+
+/* // ChatGPT: Space the existing header and command output using CSS rather than adding markup. */
+body > br {
+    display: none;
+}
+.command-line {
+    color: #b4befe;
+    margin-top: 12px;
+}
+.terminal-error {
+    color: #f38ba8;
+}
+#input-line {
+    padding: 8px 0;
+}
+
+
+/* // ChatGPT: Contact icons share the Mocha accent and stay beside your existing heading. */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 12px;
+}
+.profile-header #name {
+    margin-bottom: 0;
+}
+.contact-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.contact-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: #b4befe;
+    border-radius: 6px;
+}
+.contact-links a:hover,
+.contact-links a:focus-visible {
+    color: #cba6f7;
+    background: #313244;
+}
+.contact-links a:focus-visible {
+    outline: 2px solid #b4befe;
+    outline-offset: 3px;
+}
+.contact-links svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* // ChatGPT: A desktop neofetch layout preserves ASCII art next to the site details. */
+.neofetch {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    padding: 16px 0;
+    overflow-x: auto;
+}
+.neofetch-art {
+    color: #cba6f7;
+    font: inherit;
+    line-height: 1.25;
+    white-space: pre;
+    margin: 0;
+    flex-shrink: 0;
+}
+.neofetch-info {
+    white-space: nowrap;
+}
+.neofetch-info strong {
+    display: block;
+    color: #b4befe;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #45475a;
+}
+.neofetch-label {
+    color: #94e2d5;
+}
+.neofetch-palette {
+    display: flex;
+    margin-top: 16px;
+}
+.neofetch-palette span {
+    width: 26px;
+    height: 18px;
 }
