@@ -9,6 +9,8 @@ let original_input = ""
 // ChatGPT: Startup owns the prompt only until the intro finishes or a key skips it.
 let startupRunning = false;
 let startupTimer = null;
+const startupCommands = ['neofetch', 'help'];
+let startupIndex = 0;
 
 terminal.addEventListener('click', () => {
     input.focus();
@@ -114,7 +116,6 @@ input.addEventListener('keydown', (event) => {
                 "- neofetch: Show ASCII artwork and the site profile",
                 "- open /professional/resume.pdf: View my resume",
                 "- cd /src: Browse this website source",
-                "- Tab: Complete commands and paths; Up/Down: Command history",
                 "- clear: Clear the terminal screen",
                 "- open [file]: open this file in a new tab",
                 "- help: Show this help message",
@@ -420,10 +421,10 @@ function neofetch() {
     let info = document.createElement('div');
     info.className = 'neofetch-info';
     let title = document.createElement('strong');
-    title.textContent = 'thomas@terminal-website';
+    title.textContent = 'thomas@savasten.com';
     info.appendChild(title);
     const details = [
-        ['Site', 'Thomas Savasten'],
+        ['Site', 'thomas.savasten.com'],
         ['Studies', 'Computer Science + Mathematics'],
         ['University', 'University of Kansas'],
         ['Shell', 'JavaScript / virtual filesystem'],
@@ -457,22 +458,39 @@ function neofetch() {
 }
 
 
-// ChatGPT: Type the intro into your existing input, then run its normal Enter handler.
+// ChatGPT: Run both intro commands through your existing Enter handler in order.
+function runStartupCommand() {
+    startupRunning = false;
+    input.readOnly = false;
+    input.value = startupCommands[startupIndex++];
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    startupRunning = startupIndex < startupCommands.length;
+    input.readOnly = startupRunning;
+    if (!startupRunning) input.setAttribute('aria-label', 'Terminal command');
+}
+
 function startStartup() {
     startupRunning = true;
+    startupIndex = 0;
     input.readOnly = true;
     input.setAttribute('aria-label', 'Starting terminal. Press a key to skip the intro.');
-    const command = 'neofetch';
-    let index = 0;
-    function typeNextLetter() {
-        input.value = command.slice(0, ++index);
-        input.setSelectionRange(input.value.length, input.value.length);
-        startupTimer = setTimeout(index < command.length ? typeNextLetter : finishStartup, index < command.length ? 95 : 250);
+    function typeCommand() {
+        const command = startupCommands[startupIndex];
+        let index = 0;
+        function typeNextLetter() {
+            input.value = command.slice(0, ++index);
+            input.setSelectionRange(input.value.length, input.value.length);
+            startupTimer = setTimeout(index < command.length ? typeNextLetter : () => {
+                runStartupCommand();
+                startupTimer = startupRunning ? setTimeout(typeCommand, 450) : null;
+            }, index < command.length ? 95 : 250);
+        }
+        typeNextLetter();
     }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         finishStartup();
     }else{
-        startupTimer = setTimeout(typeNextLetter, 350);
+        startupTimer = setTimeout(typeCommand, 350);
     }
 }
 
@@ -480,11 +498,39 @@ function finishStartup() {
     if (!startupRunning) return;
     clearTimeout(startupTimer);
     startupTimer = null;
-    startupRunning = false;
-    input.readOnly = false;
-    input.setAttribute('aria-label', 'Terminal command');
-    input.value = 'neofetch';
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    while (startupIndex < startupCommands.length) runStartupCommand();
 }
+
+// ChatGPT: Follow new output unless the visitor scrolls up to read earlier lines.
+let followPrompt = true;
+let lastScrollY = window.scrollY;
+let scrollFrame = null;
+function keepPromptVisible() {
+    if (!followPrompt || scrollFrame !== null) return;
+    scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = null;
+        if (!followPrompt) return;
+        const promptBounds = document.getElementById('input-line').getBoundingClientRect();
+        if (promptBounds.bottom > window.innerHeight - 24) {
+            window.scrollBy({ top: promptBounds.bottom - window.innerHeight + 24, behavior: 'instant' });
+        }
+        lastScrollY = window.scrollY;
+    });
+}
+window.addEventListener('wheel', event => {
+    if (event.deltaY < 0) followPrompt = false;
+}, { passive: true });
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    if (currentScrollY < lastScrollY) followPrompt = false;
+    else if (currentScrollY > lastScrollY) {
+        const bounds = document.getElementById('input-line').getBoundingClientRect();
+        if (bounds.bottom <= window.innerHeight && bounds.top >= 0) followPrompt = true;
+    }
+    lastScrollY = currentScrollY;
+}, { passive: true });
+window.addEventListener('resize', keepPromptVisible);
+new MutationObserver(keepPromptVisible).observe(output, { childList: true, subtree: true, characterData: true });
+new ResizeObserver(keepPromptVisible).observe(terminal);
 
 startStartup();

@@ -10,6 +10,8 @@
 }
 
 html {
+    /* // ChatGPT: Let the terminal scroll logic handle new output without browser scroll anchoring. */
+    overflow-anchor: none;
     min-height: 100%;
     background-color: var(--background);
 }
