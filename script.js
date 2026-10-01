@@ -760,16 +760,33 @@ function acceptNoteInput(value) {
     }
 }
 
+const GUESTBOOK_API = 'https://thomas.savasten.com/api/notes';
+
 async function guestbookRequest(path, options = {}) {
-    const response = await fetch('/api/notes' + path, { ...options, signal: AbortSignal.timeout(15000) });
+    const response = await fetch(GUESTBOOK_API + path, {
+        ...options,
+        signal: AbortSignal.timeout(15000)
+    });
+
     let data;
-    try { data = await response.json(); }
-    catch { throw new Error(`The guestbook could not be reached (HTTP ${response.status}). Please try again later.`); }
+
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error(
+            `The guestbook could not be reached (HTTP ${response.status}). Please try again later.`
+        );
+    }
+
     if (!response.ok) {
-        const error = new Error(data.error || 'The guestbook is unavailable. Please try again later.');
+        const error = new Error(
+            data.error || 'The guestbook is unavailable. Please try again later.'
+        );
+
         error.status = response.status;
         throw error;
     }
+
     return data;
 }
 

@@ -3,10 +3,37 @@
 const { neon } = require('@neondatabase/serverless');
 const { createHmac } = require('node:crypto');
 
+const allowedOrigins = new Set([
+    'https://thomas-writes.github.io',
+    'https://thomas.savasten.com'
+]);
+
 module.exports = async function handler(req, res) {
+    const origin = req.headers.origin;
+
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
+
+    if (origin && !allowedOrigins.has(origin)) {
+        res.statusCode = 403;
+        return res.end(JSON.stringify({
+            error: 'Origin not allowed.'
+        }));
+    }
+
+    if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+    }
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.statusCode = 204;
+        return res.end();
+    }
     const reply = (status, data) => { res.statusCode = status; res.end(JSON.stringify(data)); };
     if (!['GET', 'POST'].includes(req.method)) {
         res.setHeader('Allow', 'GET, POST');
@@ -25,7 +52,6 @@ module.exports = async function handler(req, res) {
             return reply(200, { notes });
         }
         if (!req.headers['content-type']?.startsWith('application/json')) return reply(415, { error: 'Send plain text fields as JSON.' });
-        if (req.headers['sec-fetch-site'] === 'cross-site') return reply(403, { error: 'Submit notes from this website.' });
         if (Number(req.headers['content-length'] || 0) > 8192) return reply(413, { error: 'That note is too large.' });
         let body = req.body;
         if (typeof body === 'string') {
