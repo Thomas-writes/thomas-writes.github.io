@@ -647,7 +647,7 @@ function neofetch() {
     let info = document.createElement('div');
     info.className = 'neofetch-info';
     let title = document.createElement('strong');
-    title.textContent = 'thomas@vercel';
+    title.textContent = 'visitor@thomas';
     info.appendChild(title);
     const details = [
         ['Site', 'thomas.savasten.com'],
