@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal Website</title>
-<!-- // ChatGPT: BEGIN CG-HTML-01 added code (after original line 6). -->
+<!-- // ChatGPT: BEGIN CG-HTML-01 modified code (original lines 6-6). -->
+    <title>Shell Website</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <!-- // ChatGPT: END CG-HTML-01. -->
     <link rel="stylesheet" href="styles.css">
@@ -30,18 +30,24 @@
     </header>
 <!-- // ChatGPT: END CG-HTML-02. -->
     <h2 class="website-text">
-        Welcome to my personal Website
+<!-- // ChatGPT: BEGIN CG-HTML-03 modified code (original lines 16-16). -->
+        Welcome to my personal website! :)
+<!-- // ChatGPT: END CG-HTML-03. -->
     </h2>
     <h3 id="helper-text" class="website-text">
-<!-- // ChatGPT: BEGIN CG-HTML-03 modified code (original lines 19-19). -->
-        (Type 'leave-note' to sign the guestbook, or 'help' to explore)
-<!-- // ChatGPT: END CG-HTML-03. -->
+<!-- // ChatGPT: BEGIN CG-HTML-04 modified code (original lines 19-19). -->
+        (Leave a note: cd /guestbook, then touch your-note.txt. Add your name and message, then type y to submit for approval. Read approved notes with ls and cat filename.txt.)
+<!-- // ChatGPT: END CG-HTML-04. -->
     </h3>
     <br> 
-    <div id="terminal">
+<!-- // ChatGPT: BEGIN CG-HTML-05 modified code (original lines 22-22). -->
+    <div id="shell">
+<!-- // ChatGPT: END CG-HTML-05. -->
         <div id="output"></div>
         <div id="input-line">
-            <span id='mainspan' class="prompt">$ /</span>
+<!-- // ChatGPT: BEGIN CG-HTML-06 modified code (original lines 25-25). -->
+            <span id='mainspan' class="prompt">visitor@thomas:~$</span>
+<!-- // ChatGPT: END CG-HTML-06. -->
             <input type="text" id="input" autofocus>
         </div>
     </div>

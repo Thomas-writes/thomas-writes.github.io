@@ -16,8 +16,10 @@
 - Lat Pullovers: 
 - Machine Curls: 2 x 10
 ### Legs: Day 3
-- Back Squat
-- 
+- Back Squat: 4 x 5
+- RDL: 3 x 12
+- Quad Extentsion: 3 x AMRAP
+- Hamstring Curls: 3 x AMRAP
 # My Favorite Workouts for Each Muscle
 ### Chest
 - DB Bench (incline or flat) 
@@ -31,4 +33,3 @@
 - Baysian Cable Curves
 - Machine Curls
 - Straight Bar Cable Curls
-###

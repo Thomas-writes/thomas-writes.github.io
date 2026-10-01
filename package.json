@@ -1,5 +1,5 @@
 {
-  "name": "terminal-website",
+  "name": "shell-website",
   "private": true,
   "version": "1.0.0",
   "engines": {
@@ -9,7 +9,11 @@
     "build": "node scripts/build.cjs",
     "dev": "node --env-file=.env.local scripts/dev.cjs",
     "guestbook:setup": "node --env-file=.env.local scripts/guestbook.cjs setup",
-    "guestbook:review": "node --env-file=.env.local scripts/guestbook.cjs"
+    "guestbook:review": "node --env-file=.env.local scripts/guestbook.cjs",
+    "guestbook:requests": "node --env-file=.env.local scripts/guestbook.cjs list",
+    "guestbook:all": "node --env-file=.env.local scripts/guestbook.cjs all",
+    "guestbook:approve": "node --env-file=.env.local scripts/guestbook.cjs approve",
+    "guestbook:delete": "node --env-file=.env.local scripts/guestbook.cjs delete"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.1.0"

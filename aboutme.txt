@@ -1,1 +1,13 @@
-Hello my name is Thomas Savasten. I am a first year student at the University of Kansas studying Computer Science and Math. I am currently enrolled in: Embedded Systems, Differential Equations, Software Engineering 1, Linear Algebra, and Applied Portfolio Management. I am in the University honors program and intend on graduating with honors in 2028. My current cummulative GPA is 4.0. 
+Hello! Glad you are navigating my website well enough to find this.
+I am a junior at KU studying computer science and math.
+I'm currently interested in low-level concepts. This includes: operating systems design, computer architecture, compilers, and embedded systems.
+
+My math degree is purely for fun I don't really plan on using it unless I can find a good way to apply it within my career interests.
+My current coursework is: Embedded Machine Learning, Intro to Machine Learning, Computer Systems Architecture, and Programming Paradigms.
+I have a 3.96 GPA at KU (GPA is such an interesting way to measure students, not really a fan, and I promise I'm not just spiteful because I don't have a 4.0 lol)
+I also am the co-chair of KU's chapter of ACM. This is a lot of work but I like trying to help build community.
+
+Outside of school I also do a lot. I have started a pottery class with my mom and sister that I am greatly enjoiying. I will have to add some pictures here when I am better. 
+I also like to lift or atleast stay active. This has been hard to balance with school this year but I am making it work.
+
+Thanks for visiting my website :) leave a note if you want.

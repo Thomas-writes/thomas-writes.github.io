@@ -7,11 +7,11 @@
     --muted: #a6adc8;
     --cursor: #f5e0dc;
     --selection: #585b70;
-    --terminal-font: 'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrains Mono', monospace;
+    --shell-font: 'JetBrainsMono Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrains Mono', monospace;
 }
 
 html {
-    /* // ChatGPT: Let the terminal scroll logic handle new output without browser scroll anchoring. */
+    /* // ChatGPT: Let the shell scroll logic handle new output without browser scroll anchoring. */
     overflow-anchor: none;
     min-height: 100%;
     background-color: var(--background);
@@ -22,7 +22,7 @@ body {
 /* // ChatGPT: BEGIN CG-CSS-02 modified code (original lines 3-6). */
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--terminal-font);
+    font-family: var(--shell-font);
     font-size: 16px;
     line-height: 1.65;
     padding: 56px 48px;
@@ -65,8 +65,8 @@ body {
     color: #9399b2;
 /* // ChatGPT: END CG-CSS-06. */
 }
-#terminal {
-/* // ChatGPT: BEGIN CG-CSS-07 modified code (original lines 28-34). */
+/* // ChatGPT: BEGIN CG-CSS-07 modified code (original lines 27-34). */
+#shell {
     width: 100%;
     margin: 32px 0 0;
     background-color: var(--background);
@@ -134,14 +134,16 @@ body > br {
     display: none;
 }
 .command-line {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
     color: #b4befe;
-    margin-top: 12px;
+    margin-top: 0;
 }
-.terminal-error {
+.shell-error {
     color: #f38ba8;
 }
 #input-line {
-    padding: 8px 0;
+    padding: 0;
 }
 
 
@@ -188,13 +190,13 @@ body > br {
     display: flex;
     align-items: center;
     gap: 36px;
-    padding: 16px 0;
+    padding: 8px 0 12px;
     overflow-x: auto;
 }
 .neofetch-art {
     color: #cba6f7;
     font: inherit;
-    /* // ChatGPT: Render the Unicode art at the same text size as the terminal. */
+    /* // ChatGPT: Render the Unicode art at the same text size as the shell. */
     font-size: 1em;
     line-height: 1;
     letter-spacing: 0;
@@ -231,5 +233,112 @@ body > br {
 }
 .guestbook-guide {
     color: var(--muted);
+}
+
+/* // ChatGPT: Output and input use the same line height and left edge, as in a shell. */
+#shell {
+    line-height: 1.45;
+}
+.file-output, .shell-list {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin: 0;
+    padding: 0;
+}
+
+/* // ChatGPT: Match shell listings with Mocha blue directories and plain-text files. */
+.directory-entry {
+    color: #89b4fa;
+}
+.file-entry {
+    color: var(--foreground);
+}
+
+/* // ChatGPT: Give cat output a readable measure and Mocha syntax colors without changing the prompt grid. */
+.file-output {
+    max-width: 88ch;
+    line-height: 1.65;
+    margin-block: 0.4em 0.8em;
+    tab-size: 4;
+}
+.file-output.source-output {
+    max-width: 100%;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-wrap: normal;
+    line-height: 1.55;
+}
+.syntax-comment { color: #9399b2; }
+.syntax-keyword { color: #cba6f7; }
+.syntax-string { color: #a6e3a1; }
+.syntax-number, .syntax-literal { color: #fab387; }
+.syntax-property { color: #89dceb; }
+.syntax-function, .syntax-link { color: #89b4fa; }
+.syntax-heading { color: #b4befe; font-weight: 700; }
+.syntax-strong { color: #f9e2af; font-weight: 700; }
+.syntax-marker { color: #cba6f7; }
+
+/* // ChatGPT: Dedicated desktop file-reader layout for open, using the site's Mocha palette. */
+body.file-reader {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: #1e1e2e;
+    color: #cdd6f4;
+}
+.reader-page { max-width: 88ch; margin: 0 auto; padding: 48px 40px 80px; }
+.reader-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 32px;
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid #45475a;
+    color: #b4befe;
+    font-size: 14px;
+}
+.reader-content { font-size: 16px; line-height: 1.8; overflow-wrap: anywhere; }
+.reader-content h1, .reader-content h2, .reader-content h3,
+.reader-content h4, .reader-content h5, .reader-content h6 {
+    color: #b4befe;
+    line-height: 1.35;
+    margin: 1.6em 0 0.6em;
+}
+.reader-content > :first-child { margin-top: 0; }
+.reader-content h1 { font-size: 2em; }
+.reader-content h2 { font-size: 1.4em; }
+.reader-content h3 { font-size: 1.15em; }
+.reader-content p, .reader-content ul, .reader-content ol { margin: 0 0 1.2em; }
+.reader-content li { margin: 0.35em 0; }
+.reader-page a { color: #89b4fa; text-underline-offset: 4px; }
+.reader-page a:hover { color: #b4befe; }
+.reader-page a:focus-visible { outline: 2px solid #cba6f7; outline-offset: 4px; }
+.reader-content strong { color: #f9e2af; }
+.reader-content em { color: #f5c2e7; }
+.reader-content code { font-family: inherit; color: #a6e3a1; background: #181825; padding: 0.12em 0.35em; border-radius: 4px; }
+.reader-content pre { background: #181825; border: 1px solid #313244; border-radius: 8px; padding: 20px; overflow-x: auto; line-height: 1.55; tab-size: 4; }
+.reader-content pre code { padding: 0; background: none; color: #cdd6f4; }
+.reader-content blockquote { border-left: 3px solid #cba6f7; margin-left: 0; padding-left: 20px; color: #a6adc8; }
+.reader-content table { border-collapse: collapse; width: 100%; }
+.reader-content th, .reader-content td { border: 1px solid #45475a; padding: 10px 14px; text-align: left; }
+.reader-content th { background: #313244; color: #b4befe; }
+.reader-content hr { border: 0; border-top: 1px solid #45475a; margin: 2em 0; }
+.reader-content img { max-width: 100%; }
+.reader-text { white-space: pre-wrap; tab-size: 4; }
+.reader-source { white-space: pre; overflow-x: auto; overflow-wrap: normal; line-height: 1.55; }
+
+/* // ChatGPT: Catppuccin Mocha accents separate prompt syntax and help argument types. */
+.prompt-user { color: #a6e3a1; }
+.prompt-separator { color: #cdd6f4; }
+.prompt-path, .help-directory { color: #89b4fa; }
+.prompt-symbol { color: #cba6f7; }
+.help-file { color: #f9e2af; }
+/* // ChatGPT: Prevent programming-font ligatures from joining the yellow > to the following colon. */
+.help-command {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
 }
 /* // ChatGPT: END CG-CSS-14. */

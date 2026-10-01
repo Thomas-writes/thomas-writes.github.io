@@ -1,22 +1,13 @@
 # Projects
-## [HackKU 2025](https://hack-ku-25.vercel.app/)
+## [Compiler Optimization Research](https://github.com/Thomas-writes/GCCResearch)
+This is research I started this year. The goal of this research is to achieve O0 performance starting from O3. This is nontrivial because turning off every flag does not achieve this, which implies custom flags are required. I have currently rebuilt GCC with debugger flags active so that I can use lldb on my GCC install. This allows me to directly invoke cc1 (the c compiler) and step through the usage of different optimization variables.
+## [Nonlinear Programming Research](https://github.com/Thomas-writes/NLP)
+This was research I did all of my sophomore year. I benchmarked the runtime performance of nonlinear programming algorithms across simple, complex, and ubounded optimization problems using Python. I presented this at the GEA research showcase and recieved an average rating of ~4/5 by the judges. Feel free to contact me about this research.
+## [HackUTD 2025](https://devpost.com/software/healthsense-0qxrs4)
+This is my favorite hackathon project I've done. We build a embedded project where we would use sensors to track a persons health. Those sensors went from Arduino to Raspberry Pi to Redis Database on Vultr. I was in charge of coding the Raspberry Pi and getting data from the Arduino to Redis. We won best use of Vultr for this project.
+## [Personal Website](https://github.com/Thomas-writes/thomas-writes.github.io)
+This was originally something I was working on for fun a while back to practice coding in JavaScript because I had to give a workshop on it. I didn't touch this project for like two years because frontend has become less and less interesting. I have used AI to revamp the entire website and make it look significantly more pretty. I made sure to have AI mark the source code where it changed it.
+## [HackKU 2025](https://devpost.com/software/spot-a-song-ufcm9k)
 Worked with a team of 3 others. We made a website that took a song or artist request. Then used gemini API to generate songs similar to the input. Then we sent the similar songs to spotify API and used a JavaScript generate function to create html objects on screen for each song. We also made it so the user could send this to spotify (this only worked on my account because of spotify APIs developer rules). I was in charge of the JavaScript generate function and I also helped with the connections between APIs and the send to spotify button.
-## Personal Website 
-My first personal website was made using React and Chakra UI. Using the UI library made it incredibly hard to update/manage, especially since Chakra switched versions right after I developed it. I am not a fan of the current documentation Chakra has so I switched to just HTML, CSS, and JS for the website you are reading this from.
-```
-function catFunc(out, fileName) {
-output.appendChild(document.createElement('br'));
-let header = document.createElement('div');
-header.textContent = `This is the content of ${fileName}:`;
-output.appendChild(header);
-output.appendChild(document.createElement('br'));
-let outputtext = document.createElement('div');
-outputtext.innerText = out;
-outputtext.style.paddingLeft = "20px";
-output.appendChild(outputtext);
-output.appendChild(document.createElement('br'));
-};
-```
-This is some sample code from the terminal website. This is code for the 'cat' function where the output variable is a 'div' for the output text.
-## HackUTD 2024
+## [HackUTD 2024](https://devpost.com/software/team-registration-5nzwjb)
 Worked with a team of 3 others. We made a website that took in a url and used a webscraper to analyze data from that url. I worked on frontend for this project and did version control through Github. 
