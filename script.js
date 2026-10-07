@@ -36,7 +36,7 @@ let hobbiesFiles = ["workouts.md"]
 // ChatGPT: Reuse the existing header links so contact values have one source of truth.
 const contactFiles = {
     linkedin: { label: 'LinkedIn', selector: '.contact-links a[href^="https://www.linkedin.com/"]' },
-    phone: { label: 'Phone', selector: '.contact-links a[href^="tel:"]' },
+    github: { label: 'GitHub', selector: '.contact-links a[href^="https://github.com/"]' },
     email: { label: 'Email', selector: '.contact-links a[href^="mailto:"]' }
 };
 let commandHistory = [];
